@@ -1,7 +1,5 @@
 from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Text
 from aiogram.types import Message
-from aiogram import F
 import asyncio
 
 API_TOKEN = '7523283669:AAGzK1tGLYK3ogHhNpWRUHrGVyrhkg0CAoY'
@@ -9,8 +7,12 @@ API_TOKEN = '7523283669:AAGzK1tGLYK3ogHhNpWRUHrGVyrhkg0CAoY'
 bot = Bot(token=API_TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher()
 
-@dp.message(Text(contains='@all'))
+@dp.message()
 async def mention_all(message: Message):
+    text = message.text or ""
+    if '@all' not in text:
+        return
+
     chat_id = message.chat.id
     user_id = message.from_user.id
 
@@ -35,9 +37,7 @@ async def mention_all(message: Message):
         await message.reply(f"❗ Ошибка при упоминании: {e}")
 
 async def main():
-    dp.include_router(dp)
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
-    import asyncio
     asyncio.run(main())
